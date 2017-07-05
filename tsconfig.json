@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "lib": ["esnext", "dom"],
+        "sourceMap": true,
+        "declaration": true,
+        "outDir": "built/",
+        "module": "commonjs"
+    }
+}

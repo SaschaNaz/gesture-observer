@@ -1,0 +1,58 @@
+<!-- Sample based on code written by David Rousset - @davrous
+     http://david.blob.core.windows.net/html5/touchsample7.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GestureObserver Sample (based on the sample of @davrous)</title>
+    <link rel="stylesheet" type="text/css" href="sample/toucharticle.css" />
+    <script src="sample/Corners.js"></script>
+    <script src="https://rawgit.com/systemjs/systemjs/master/dist/system.js"></script>
+    <script>
+        var __asyncValues = (this && this.__asyncIterator) || function (o) {
+            if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+            var m = o[Symbol.asyncIterator];
+            return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
+        };
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // To avoid having the equivalent of the contextual  
+            // "right click" menu being displayed on the MSPointerUp event, 
+            // we're preventing the default behavior
+            myGreatPicture.addEventListener("contextmenu", function (e) {
+                e.preventDefault();    // Disables system menu
+            }, false);
+
+            window.GestureObserver = (await SystemJS.import("lib/gesture-observer.js")).default;
+            const observer = new GestureObserver();
+
+            // for-await es2017 compatible syntax
+            try {
+                for (var _a = __asyncValues(observer.observe(myGreatPicture)), _b; _b = await _a.next(), !_b.done;) {
+                    const g = await _b.value;
+                    const m = new WebKitCSSMatrix(getComputedStyle(g.target).transform); // Get the latest CSS transform on the element
+                    g.target.style.transform = m
+                        .translate(g.center.offset.x, g.center.offset.y) // Move the transform origin under the center of the gesture
+                        .rotate(g.rotation) // Apply Rotation
+                        .scale(g.zoom) // Apply Scale
+                        .translate(g.pan.x, g.pan.y) // Apply Translation
+                        .translate(-g.center.offset.x, -g.center.offset.y); // Move the transform origin back
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; console.error(e_1_1); }
+            finally {
+                try {
+                    if (_b && !_b.done && (_c = _a.return)) await _c.call(_a);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            var e_1, _c;
+        });
+    </script>
+</head>
+
+<body>
+    <div id="myGreatPicture" class="container"></div>
+</body>
+
+</html>
