@@ -23,7 +23,7 @@ export default class {
     private _previousCumulative: GestureCalculation;
     private _msGesture = (window as any).MSGesture && new MSGesture();
 
-    private _pointerDownListener = (ev: PointerEvent) => this._msGesture && this._msGesture.addPointer(ev.pointerId);
+    private _pointerDownListenerMSGesture = (ev: PointerEvent) => this._msGesture && this._msGesture.addPointer(ev.pointerId);
 
     private _msGestureStartListener = (ev: MSGestureEvent) => {
         const cumulative = this._convertMSGestureEvent(ev);
@@ -93,6 +93,18 @@ export default class {
 
     };
 
+    private _pointerDownListener = (ev: PointerEvent) => {
+
+    }
+
+    private _pointerMoveListener = (ev: PointerEvent) => {
+
+    }
+
+    private _pointerUpListener = (ev: PointerEvent) => {
+        
+    }
+
     async *observe(element: HTMLElement) {
         if (this._observing) {
             throw new Error("Already observing another element")
@@ -101,21 +113,31 @@ export default class {
         this._msGesture.target = element;
         let promise = new Promise<Gesture>(resolve => this._resolver = resolve);
         
-        // Microsoft Edge
-        // supports .expansion, .rotation, .scale, .translationX, .translationY, .velocityAngular,
-        // .velocityExpansion, .velocityX, .velocityY
-        element.addEventListener("pointerdown", this._pointerDownListener);
-        element.addEventListener("MSGestureStart", this._msGestureStartListener);
-        element.addEventListener("MSGestureChange", this._msGestureChangeListener);
-        element.addEventListener("MSInertiaStart", this._msInertiaStartListener);
-        element.addEventListener("MSGestureEnd", this._msGestureEndListener);
-
-        // Apple Safari
-        // Safari does not indicate inertia
-        // supports .rotation / .scale
-        element.addEventListener("gesturestart", this._webkitGestureStartListener);
-        element.addEventListener("gesturechange", this._webkitGestureChangeListener);
-        element.addEventListener("gestureend", this._webkitGestureEndListener);
+        if ((window as any).MSGestureEvent) {
+            // Microsoft Edge
+            // supports .expansion, .rotation, .scale, .translationX, .translationY, .velocityAngular,
+            // .velocityExpansion, .velocityX, .velocityY
+            element.addEventListener("pointerdown", this._pointerDownListenerMSGesture);
+            element.addEventListener("MSGestureStart", this._msGestureStartListener);
+            element.addEventListener("MSGestureChange", this._msGestureChangeListener);
+            element.addEventListener("MSInertiaStart", this._msInertiaStartListener);
+            element.addEventListener("MSGestureEnd", this._msGestureEndListener);
+        }
+        else if ((window as any).GestureEvent) {
+            // Apple Safari
+            // Safari does not indicate inertia
+            // supports .rotation / .scale
+            element.addEventListener("gesturestart", this._webkitGestureStartListener);
+            element.addEventListener("gesturechange", this._webkitGestureChangeListener);
+            element.addEventListener("gestureend", this._webkitGestureEndListener);
+        }
+        else {
+            // A browser with no native gesture indicator
+            // Gestures should be be manually calculated
+            element.addEventListener("pointerdown", () => {});
+            element.addEventListener("pointermove", () => {});
+            element.addEventListener("pointerup", () => {});
+        }
 
         while (this._observing) {
             const result = await promise;
@@ -133,7 +155,7 @@ export default class {
             return;
         }
 
-        this._observing.removeEventListener("pointerdown", this._pointerDownListener);
+        this._observing.removeEventListener("pointerdown", this._pointerDownListenerMSGesture);
         this._observing.removeEventListener("MSGestureStart", this._msGestureStartListener);
         this._observing.removeEventListener("MSGestureChange", this._msGestureChangeListener);
         this._observing.removeEventListener("MSInertiaStart", this._msInertiaStartListener);
