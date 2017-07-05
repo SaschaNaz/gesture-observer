@@ -16,3 +16,12 @@ body {
     height: 768px;
     background-image: url(flowersc.jpg);
 }
+
+.container {
+    position: absolute;
+    overflow: visible;
+    transform-origin: 0px 0px;
+    margin: 0px;
+    padding: 0px;
+    border: 20px solid #fff;
+}
