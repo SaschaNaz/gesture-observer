@@ -6,9 +6,9 @@
 <head>
     <title>GestureObserver Sample (based on the sample of @davrous)</title>
     <link rel="stylesheet" type="text/css" href="sample/toucharticle.css" />
-    <script src="sample/Corners.js"></script>
-    <script src="https://rawgit.com/systemjs/systemjs/master/dist/system.js"></script>
-    <script>
+    <script type="module" src="https://rawgit.com/systemjs/systemjs/master/dist/system.js"></script>
+    <script type="module">
+        import GestureObserver from "./lib/gesture-observer.js";
         var __asyncValues = (this && this.__asyncIterator) || function (o) {
             if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
             var m = o[Symbol.asyncIterator];
@@ -23,7 +23,6 @@
                 e.preventDefault();    // Disables system menu
             }, false);
 
-            window.GestureObserver = (await SystemJS.import("lib/gesture-observer.js")).default;
             const observer = new GestureObserver();
 
             // for-await es2017 compatible syntax

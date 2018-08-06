@@ -14,12 +14,12 @@ export interface GestureCalculation {
     zoom: number;
     rotation: number;
 }
-export default class  {
+export default class {
     private _observing;
     private _resolver;
     private _previousCumulative;
     private _msGesture;
-    private _pointerDownListener;
+    private _pointerDownListenerMSGesture;
     private _msGestureStartListener;
     private _msGestureChangeListener;
     private _msInertiaStartListener;
@@ -27,8 +27,11 @@ export default class  {
     private _webkitGestureStartListener;
     private _webkitGestureChangeListener;
     private _webkitGestureEndListener;
+    private _pointerDownListener;
+    private _pointerMoveListener;
+    private _pointerUpListener;
     observe(element: HTMLElement): AsyncIterableIterator<Gesture>;
     disconnect(): void;
-    private _convertMSGestureEvent(ev);
-    private _produceDelta(cumulative);
+    private _convertMSGestureEvent;
+    private _produceDelta;
 }
